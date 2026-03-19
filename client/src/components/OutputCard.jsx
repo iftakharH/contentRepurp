@@ -46,7 +46,7 @@ const OutputCard = ({ content, onDelete }) => {
   );
 
   return (
-    <div className="glass rounded-2xl p-5 hover:border-white/10 transition-all duration-300 group">
+    <div className="glass rounded-2xl p-5 hover:border-white/10 transition-all duration-300 group flex flex-col h-96">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ const OutputCard = ({ content, onDelete }) => {
       </div>
 
       {/* Content */}
-      <div className="bg-dark-800 rounded-xl p-4 mb-4 border border-white/5">
+      <div className="bg-dark-800 rounded-xl p-4 mb-4 border border-white/5 flex-1 overflow-y-auto custom-scrollbar relative">
         <p className="text-sm text-dark-50 whitespace-pre-wrap leading-relaxed">
           {content.repurposedContent}
         </p>

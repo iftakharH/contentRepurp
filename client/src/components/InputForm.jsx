@@ -18,24 +18,31 @@ const tones = [
   { value: "inspirational", label: "Inspirational" },
 ];
 
+// To add a new free model in the future:
+// 1. Find the model ID on OpenRouter (it MUST end in :free to be absolutely free)
+// 2. Add an object to this array with its value (ID), label (Name), and provider.
 const models = [
-  { value: "openai/gpt-3.5-turbo", label: "GPT-3.5 Turbo", provider: "OpenAI" },
-  { value: "openai/gpt-4o-mini", label: "GPT-4o Mini", provider: "OpenAI" },
-  { value: "openai/gpt-4o", label: "GPT-4o", provider: "OpenAI" },
-  { value: "google/gemini-2.0-flash-001", label: "Gemini 2.0 Flash", provider: "Google" },
-  { value: "google/gemini-2.5-pro-preview", label: "Gemini 2.5 Pro", provider: "Google" },
-  { value: "anthropic/claude-3.5-sonnet", label: "Claude 3.5 Sonnet", provider: "Anthropic" },
-  { value: "anthropic/claude-3-haiku", label: "Claude 3 Haiku", provider: "Anthropic" },
-  { value: "meta-llama/llama-3.1-70b-instruct", label: "Llama 3.1 70B", provider: "Meta" },
-  { value: "mistralai/mistral-small-3.1-24b-instruct", label: "Mistral Small 3.1", provider: "Mistral" },
-  { value: "deepseek/deepseek-chat-v3-0324", label: "DeepSeek V3", provider: "DeepSeek" },
+  { value: "google/gemma-3-27b-it:free", label: "Gemma 3 27B", provider: "Google" },
+  { value: "mistralai/mistral-small-3.1-24b-instruct:free", label: "Mistral Small 3.1", provider: "Mistral" },
+  { value: "qwen/qwen3-4b:free", label: "Qwen 3 4B", provider: "Qwen" },
+  { value: "stepfun/step-3.5-flash:free", label: "Step 3.5 Flash", provider: "StepFun" },
+  { value: "minimax/minimax-m2.5:free", label: "MiniMax M2.5", provider: "MiniMax" },
+  { value: "openai/gpt-oss-20b:free", label: "GPT OSS 20B", provider: "OpenAI" },
+  { value: "openai/gpt-oss-120b:free", label: "GPT OSS 120B", provider: "OpenAI" },
+  { value: "nvidia/nemotron-3-super-120b-a12b:free", label: "Nemotron 3 Super", provider: "Nvidia" },
+  { value: "meta-llama/llama-3.2-3b-instruct:free", label: "Llama 3.2 3B", provider: "Meta" },
+  { value: "liquid/lfm-2.5-1.2b-thinking:free", label: "LFm 2.5 1.2B", provider: "Liquid" },
+  { value: "arcee-ai/trinity-mini:free", label: "Trinity Mini", provider: "Arcee AI" },
+  { value: "nvidia/nemotron-nano-9b-v2:free", label: "Nemotron Nano 9B", provider: "Nvidia" },
+  { value: "z-ai/glm-4.5-air:free", label: "GLM 4.5 Air", provider: "Z-AI" },
+  { value: "nousresearch/hermes-3-llama-3.1-405b:free", label: "Hermes 3 405B", provider: "NousResearch" },
 ];
 
 const InputForm = ({ onSubmit, loading }) => {
   const [originalContent, setOriginalContent] = useState("");
   const [platform, setPlatform] = useState("twitter");
   const [tone, setTone] = useState("professional");
-  const [model, setModel] = useState("openai/gpt-3.5-turbo");
+  const [model, setModel] = useState("google/gemma-3-27b-it:free");
   const [showModels, setShowModels] = useState(false);
   const [customApiKey, setCustomApiKey] = useState("");
   const [useCustomKey, setUseCustomKey] = useState(false);
@@ -58,9 +65,14 @@ const InputForm = ({ onSubmit, loading }) => {
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* Content Textarea */}
       <div>
-        <label className="block text-sm font-medium text-dark-100 mb-2">
-          Original Content
-        </label>
+        <div className="flex items-center justify-between mb-2">
+          <label className="block text-sm font-medium text-dark-100">
+            Original Content
+          </label>
+          <span className={`text-[10px] sm:text-xs font-medium ${originalContent.length > 5000 ? 'text-red-400' : 'text-dark-300'}`}>
+            {originalContent.length} chars
+          </span>
+        </div>
         <textarea
           id="original-content"
           value={originalContent}
@@ -151,7 +163,7 @@ const InputForm = ({ onSubmit, loading }) => {
         {/* Model grid */}
         {showModels && (
           <div className="space-y-4 animate-in">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto custom-scrollbar pr-1">
               {models.map((m) => (
                 <button
                   key={m.value}

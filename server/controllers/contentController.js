@@ -8,7 +8,12 @@ const { OpenAI } = require("openai");
 const repurposeContent = async (req, res) => {
   try {
     const { originalContent, platform, tone, model, customApiKey } = req.body;
-    const selectedModel = model || "google/gemini-2.5-pro:free";
+    
+    // SECURITY: Ensure the requested model is free unless a custom API key is explicitly provided!
+    let selectedModel = model || "google/gemma-3-27b-it:free";
+    if (!customApiKey && !selectedModel.endsWith(":free")) {
+      selectedModel = "google/gemma-3-27b-it:free";
+    }
 
     if (!originalContent || !platform) {
       return res
@@ -56,7 +61,8 @@ Repurposed Content for ${platform}:`;
     res.status(201).json(content);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: error.message });
+    const statusCode = error.status || 500;
+    res.status(statusCode).json({ message: error.message || "An unexpected error occurred" });
   }
 };
 
