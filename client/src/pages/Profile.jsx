@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { HiUser, HiCheck, HiExclamationTriangle } from "react-icons/hi2";
 import { updateUserProfile } from "../services/api";
+import Footer from "../components/Footer";
 
 const Profile = ({ user, onUpdateUser }) => {
   const [formData, setFormData] = useState({
@@ -38,16 +39,17 @@ const Profile = ({ user, onUpdateUser }) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-12">
-      <div className="mb-8 flex items-center gap-3">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500 to-purple-500 flex items-center justify-center shadow-lg shadow-primary-500/20">
-          <HiUser className="w-6 h-6 text-white" />
+    <div className="min-h-[calc(100vh-64px)] flex flex-col justify-between">
+      <div className="max-w-2xl mx-auto px-4 py-12 w-full">
+        <div className="mb-8 flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500 to-purple-500 flex items-center justify-center shadow-lg shadow-primary-500/20">
+            <HiUser className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-white">Profile Settings</h1>
+            <p className="text-sm text-dark-200">Manage your account details and password</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-2xl font-bold text-white">Profile Settings</h1>
-          <p className="text-sm text-dark-200">Manage your account details and password</p>
-        </div>
-      </div>
 
       <div className="glass rounded-2xl p-6 sm:p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -122,6 +124,8 @@ const Profile = ({ user, onUpdateUser }) => {
         </form>
       </div>
     </div>
+    <Footer />
+  </div>
   );
 };
 

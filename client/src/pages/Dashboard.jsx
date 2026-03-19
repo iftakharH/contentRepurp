@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { HiSparkles, HiDocumentText } from "react-icons/hi2";
+import { HiSparkles } from "react-icons/hi2";
 import InputForm from "../components/InputForm";
 import OutputCard from "../components/OutputCard";
+import Footer from "../components/Footer";
 import {
   repurposeContent,
   getUserContent,
@@ -51,74 +52,72 @@ const Dashboard = ({ user }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Welcome Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1">
-          Welcome back,{" "}
-          <span className="gradient-text">{user.name}</span> 👋
-        </h1>
-        <p className="text-dark-200">
-          Transform your content for any platform in seconds
-        </p>
-      </div>
+    <div className="min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] lg:overflow-hidden bg-dark-900 relative flex flex-col">
+      {/* Background Decorative Blobs */}
+      <div className="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-primary-600/10 rounded-full blur-[120px] -z-10 mix-blend-screen pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-purple-600/10 rounded-full blur-[120px] -z-10 mix-blend-screen pointer-events-none" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-        {/* Input Section */}
-        <div className="lg:col-span-2">
-          <div className="glass rounded-2xl p-6 sticky top-24">
-            <div className="flex items-center gap-2 mb-5">
-              <HiSparkles className="w-5 h-5 text-primary-400" />
-              <h2 className="text-lg font-semibold text-white">
-                Repurpose Content
-              </h2>
-            </div>
+      <div className="flex-1 w-full max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-8 flex flex-col lg:flex-row gap-8 lg:min-h-0">
+        
+        {/* Left Column: Input Form */}
+        <div className="w-full lg:w-[450px] xl:w-[500px] shrink-0 lg:h-full flex flex-col mb-12 lg:mb-0">
+          <div className="mb-6 shrink-0">
+            <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">
+              Dashboard
+            </h1>
+            <p className="text-dark-200">
+              Welcome back,{" "}
+              <span className="text-primary-400 font-medium">{user.name}</span>
+            </p>
+          </div>
+
+          <div className="glass rounded-2xl p-6 lg:flex-1 lg:overflow-y-auto custom-scrollbar shadow-xl border-white/5">
             <InputForm onSubmit={handleRepurpose} loading={loading} />
           </div>
         </div>
 
-        {/* Output Section */}
-        <div className="lg:col-span-3">
-          <div className="flex items-center gap-2 mb-5">
-            <HiDocumentText className="w-5 h-5 text-primary-400" />
-            <h2 className="text-lg font-semibold text-white">
-              Your Content
-            </h2>
-            <span className="text-xs text-dark-300 bg-dark-600 px-2 py-0.5 rounded-full">
-              {contents.length}
+        {/* Right Column: Output Cards */}
+        <div className="flex-1 lg:h-full flex flex-col min-w-0">
+          <div className="flex items-center justify-between mb-6 shrink-0 pl-1">
+            <h2 className="text-xl font-bold text-white">Your Content</h2>
+            <span className="text-sm text-dark-300 bg-dark-800 px-3 py-1 rounded-full border border-white/5">
+              {contents.length} items
             </span>
           </div>
 
-          {fetchLoading ? (
-            <div className="flex items-center justify-center py-20">
-              <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          ) : contents.length > 0 ? (
-            <div className="space-y-4">
-              {contents.map((content) => (
-                <OutputCard
-                  key={content._id}
-                  content={content}
-                  onDelete={handleDelete}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="glass rounded-2xl p-12 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-dark-600 mb-4">
-                <HiDocumentText className="w-8 h-8 text-dark-300" />
+          <div className="flex-1 lg:overflow-y-auto custom-scrollbar lg:pr-2 pb-8">
+            {fetchLoading ? (
+              <div className="flex items-center justify-center py-20">
+                <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                No content yet
-              </h3>
-              <p className="text-dark-300 text-sm max-w-sm mx-auto">
-                Paste your content on the left and choose a platform to start
-                repurposing with AI
-              </p>
-            </div>
-          )}
+            ) : contents.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-dark-300 p-8 text-center glass rounded-2xl border-white/5 min-h-[400px]">
+                <div className="w-16 h-16 rounded-full bg-dark-800 flex items-center justify-center mb-4">
+                  <span className="text-3xl">✨</span>
+                </div>
+                <p className="text-lg font-medium text-white mb-2">
+                  No content yet
+                </p>
+                <p className="text-sm">
+                  Use the left panel to repurpose your first piece of content!
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 auto-rows-max">
+                {contents.map((content) => (
+                  <OutputCard
+                    key={content._id}
+                    content={content}
+                    onDelete={() => handleDelete(content._id)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };
