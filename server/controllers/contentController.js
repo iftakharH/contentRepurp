@@ -74,6 +74,20 @@ const getUserContent = async (req, res) => {
   }
 };
 
+// @desc    Get all content for user history
+// @route   GET /api/content/history
+// @access  Private
+const getHistory = async (req, res) => {
+  try {
+    const content = await Content.find({ user: req.user._id }).sort({
+      createdAt: -1,
+    });
+    res.json(content);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc    Delete content by ID
 // @route   DELETE /api/content/:id
 // @access  Private
@@ -97,4 +111,4 @@ const deleteContent = async (req, res) => {
   }
 };
 
-module.exports = { repurposeContent, getUserContent, deleteContent };
+module.exports = { repurposeContent, getUserContent, deleteContent, getHistory };

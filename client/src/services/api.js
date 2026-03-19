@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const isProd = process.env.NODE_ENV === "production";
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://contentrepurp-api.onrender.com",
+  baseURL: process.env.REACT_APP_API_URL || (isProd ? "https://contentrepurp-api.onrender.com/api" : "http://localhost:5000/api"),
 });
 
 // Attach token to every request
@@ -22,4 +24,5 @@ export const updateUserProfile = (formData) => API.put("/auth/profile", formData
 // Content
 export const repurposeContent = (data) => API.post("/content/repurpose", data);
 export const getUserContent = () => API.get("/content");
+export const getHistory = () => API.get("/content/history");
 export const deleteContent = (id) => API.delete(`/content/${id}`);

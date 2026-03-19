@@ -10,6 +10,7 @@ import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
+import History from "./pages/History";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -86,6 +87,12 @@ function App() {
               ) : (
                 <Navigate to="/login" />
               )
+            }
+          />
+          <Route
+            path="/history"
+            element={
+              user ? <History user={user} /> : <Navigate to="/login" />
             }
           />
         </Routes>

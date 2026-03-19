@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { HiSparkles, HiArrowRightOnRectangle, HiUser } from "react-icons/hi2";
+import { HiSparkles, HiArrowRightOnRectangle, HiUser, HiClock } from "react-icons/hi2";
 
 const Navbar = ({ user, onLogout }) => {
   const navigate = useNavigate();
@@ -71,6 +71,14 @@ const Navbar = ({ user, onLogout }) => {
                         className="flex items-center gap-2 px-4 py-2 text-sm text-dark-100 hover:text-white hover:bg-white/5 transition-colors"
                       >
                         <HiUser className="w-4 h-4" /> Profile Settings
+                      </Link>
+
+                      <Link
+                        to="/history"
+                        onClick={() => setShowDropdown(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-dark-100 hover:text-white hover:bg-white/5 transition-colors mb-1"
+                      >
+                        <HiClock className="w-4 h-4" /> History
                       </Link>
                       
                       <button
