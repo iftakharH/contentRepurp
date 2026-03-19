@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { HiSparkles } from "react-icons/hi2";
+
 import InputForm from "../components/InputForm";
 import OutputCard from "../components/OutputCard";
 import Footer from "../components/Footer";
