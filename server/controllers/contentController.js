@@ -1,5 +1,5 @@
 const Content = require("../models/Content");
-const openaiGlobal = require("../config/openai");
+const aiGlobal = require("../config/ai");
 const { OpenAI } = require("openai");
 
 // @desc    Repurpose content using OpenRouter
@@ -26,15 +26,15 @@ ${originalContent}
 Repurposed Content for ${platform}:`;
 
     // Determine which OpenAI client to use
-    let openaiClient = openaiGlobal;
+    let aiClient = aiGlobal;
     if (customApiKey && customApiKey.trim() !== "") {
-      openaiClient = new OpenAI({
+      aiClient = new OpenAI({
         baseURL: "https://openrouter.ai/api/v1",
         apiKey: customApiKey.trim(),
       });
     }
 
-    const completion = await openaiClient.chat.completions.create({
+    const completion = await aiClient.chat.completions.create({
       model: selectedModel,
       messages: [{ role: "user", content: prompt }],
       max_tokens: 1000,
