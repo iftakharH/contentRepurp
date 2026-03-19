@@ -8,7 +8,7 @@ const { OpenAI } = require("openai");
 const repurposeContent = async (req, res) => {
   try {
     const { originalContent, platform, tone, model, customApiKey } = req.body;
-    const selectedModel = model || "openai/gpt-3.5-turbo";
+    const selectedModel = model || "google/gemini-2.5-pro:free";
 
     if (!originalContent || !platform) {
       return res
