@@ -1,6 +1,112 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { HiSparkles, HiArrowRight, HiBolt, HiChartBar, HiFaceSmile } from "react-icons/hi2";
+import {
+  HiOutlineArrowRight,
+  HiOutlineCheck,
+  HiOutlineClipboard,
+  HiOutlineCpuChip,
+  HiOutlineDocumentText,
+  HiOutlineKey,
+  HiOutlineSparkles,
+} from "react-icons/hi2";
+import LiveDemo from "../components/LiveDemo";
+import Reveal from "../components/Reveal";
+import Footer from "../components/Footer";
+import { models, platforms } from "../data/options";
+
+const steps = [
+  {
+    index: "01",
+    title: "Paste the draft",
+    body: "Drop in the blog post, video transcript, or newsletter you already wrote. No reformatting, no prep.",
+    icon: HiOutlineDocumentText,
+  },
+  {
+    index: "02",
+    title: "Choose the room",
+    body: "Pick a platform, a tone, and a model. That is the whole setup — no prompt engineering required.",
+    icon: HiOutlineSparkles,
+  },
+  {
+    index: "03",
+    title: "Copy what fits",
+    body: "Get a post, thread, or email with the right length and structure. Copy it out, or find it again in History.",
+    icon: HiOutlineClipboard,
+  },
+];
+
+const benefits = [
+  "Unlimited generations with your own OpenRouter key",
+  `${models.length} free models included out of the box`,
+  "No markup on your API costs",
+  "Keys are used per request and never stored",
+];
+
+const ModelLibrary = () => {
+  const [selected, setSelected] = useState(models[0].value);
+
+  return (
+    <div className="overflow-hidden rounded-panel border border-white/[0.08] bg-base-850 shadow-panel">
+      <div className="flex items-center justify-between gap-3 border-b border-white/[0.06] px-5 py-3.5">
+        <div className="flex items-center gap-2">
+          <HiOutlineCpuChip className="h-4 w-4 text-primary-300" />
+          <span className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-400">
+            Free model library
+          </span>
+        </div>
+        <span className="text-[11px] text-ink-500 tabular">
+          {models.length} available
+        </span>
+      </div>
+
+      <div className="grid grid-cols-2 gap-1.5 p-3">
+        {models.map((model) => {
+          const active = model.value === selected;
+          return (
+            <button
+              key={model.value}
+              type="button"
+              onClick={() => setSelected(model.value)}
+              aria-pressed={active}
+              className={`group flex items-center justify-between gap-2 rounded-[10px] border px-3 py-2.5 text-left transition-colors duration-200 ${
+                active
+                  ? "border-primary-400/40 bg-primary-500/[0.12]"
+                  : "border-transparent bg-white/[0.02] hover:border-white/[0.08] hover:bg-white/[0.05]"
+              }`}
+            >
+              <span className="min-w-0">
+                <span
+                  className={`block truncate text-[12.5px] font-semibold ${
+                    active ? "text-primary-100" : "text-ink-200"
+                  }`}
+                >
+                  {model.label}
+                </span>
+                <span className="mt-0.5 block text-[10.5px] text-ink-500">
+                  {model.provider}
+                </span>
+              </span>
+              <span
+                className={`h-1.5 w-1.5 shrink-0 rounded-full transition-colors ${
+                  active ? "bg-lime-400" : "bg-white/10 group-hover:bg-white/25"
+                }`}
+                aria-hidden="true"
+              />
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.06] px-5 py-3 text-[11px] text-ink-500">
+        <span>Pick any of these inside the app.</span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-lime-500" aria-hidden="true" />
+          Free on OpenRouter
+        </span>
+      </div>
+    </div>
+  );
+};
 
 const Landing = ({ user }) => {
   if (user) {
@@ -8,147 +114,197 @@ const Landing = ({ user }) => {
   }
 
   return (
-    <div className="min-h-screen bg-dark-900 text-white font-sans overflow-x-hidden relative">
-      {/* Background Decorative Blobs - Increased color richness */}
-      <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-primary-600/30 rounded-full blur-[150px] -z-10 mix-blend-screen pointer-events-none" />
-      <div className="fixed top-[20%] right-[-10%] w-[40vw] h-[40vw] bg-purple-600/30 rounded-full blur-[150px] -z-10 mix-blend-screen pointer-events-none" />
-      <div className="fixed bottom-[-10%] left-[20%] w-[60vw] h-[40vw] bg-blue-500/20 rounded-full blur-[150px] -z-10 mix-blend-screen pointer-events-none" />
+    <div className="relative overflow-x-clip">
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[720px]">
+        <div className="absolute left-1/2 top-[-220px] h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-primary-600/[0.16] blur-[120px]" />
+        <div className="absolute left-[8%] top-[180px] h-[300px] w-[420px] rounded-full bg-[#1b2340]/50 blur-[100px]" />
+      </div>
+      {/* Hero */}
+      <section className="relative mx-auto max-w-6xl px-4 pb-16 pt-12 sm:px-6 lg:px-8 lg:pb-24 lg:pt-20">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14">
+          <div className="min-w-0">
+            <h1 className="font-display text-[clamp(2.6rem,6.1vw,4.4rem)] font-semibold leading-[0.97] tracking-display text-ink-100">
+              One draft.
+              <br />
+              Every platform
+              <span className="text-primary-400">.</span>
+            </h1>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center text-center">
-        <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-primary-300 text-sm font-semibold mb-8 backdrop-blur-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <HiSparkles className="w-4 h-4" />
-          <span>Transform Content at Scale with contentRepurp</span>
-        </div>
+            <p className="mt-6 max-w-[48ch] text-[15px] leading-relaxed text-ink-300 sm:text-[16.5px]">
+              Paste a blog post, transcript, or newsletter. contentRepurp
+              rewrites it for X, LinkedIn, Instagram, email, and your blog — in
+              the tone you choose.
+            </p>
 
-        <h1 className="text-5xl sm:text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-primary-100 to-white pb-6 max-w-5xl leading-tight animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
-          Maximize Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-purple-400">Audience</span> With One Click.
-        </h1>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Link
+                to="/register"
+                className="btn-primary group px-6 py-3.5 text-[14.5px]"
+              >
+                Start repurposing free
+                <HiOutlineArrowRight className="h-4 w-4 transition-transform duration-200 ease-out group-hover:translate-x-0.5" />
+              </Link>
+              <a href="#preview" className="btn-secondary px-5 py-3.5">
+                See it in action
+              </a>
+            </div>
 
-        <p className="text-lg sm:text-2xl text-dark-200 max-w-3xl mx-auto leading-relaxed mb-12 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-          Turn a single blog post or video script into a week's worth of LinkedIn posts, Twitter threads, and newsletters. Stop writing from scratch.
-        </p>
+            <ul className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-2.5 text-[12px] text-ink-400">
+              <li className="inline-flex items-center gap-1.5">
+                <HiOutlineCheck className="h-3.5 w-3.5 text-lime-400" />
+                Free models included
+              </li>
+              <li className="inline-flex items-center gap-1.5">
+                <HiOutlineCheck className="h-3.5 w-3.5 text-lime-400" />
+                5 generations per hour
+              </li>
+              <li className="inline-flex items-center gap-1.5">
+                <HiOutlineCheck className="h-3.5 w-3.5 text-lime-400" />
+                History saved to your account
+              </li>
+            </ul>
+          </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 w-full sm:w-auto animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300">
-          <Link
-            to="/register"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-500 hover:to-purple-500 text-white text-lg font-bold py-4 px-10 rounded-2xl transition-all duration-300 shadow-[0_0_40px_-10px] shadow-primary-500/50 hover:shadow-primary-500/80 hover:-translate-y-1"
-          >
-            Get Started Free
-            <HiArrowRight className="w-6 h-6" />
-          </Link>
-          <Link
-            to="/login"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-dark-800/50 hover:bg-dark-700 text-white text-lg font-bold py-4 px-10 rounded-2xl transition-all duration-300 border border-white/10 hover:border-white/20 backdrop-blur-md"
-          >
-            Login
-          </Link>
+          <div id="preview" className="min-w-0 scroll-mt-24">
+            <LiveDemo />
+          </div>
         </div>
       </section>
 
-      {/* How it Works Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-5xl font-bold text-white mb-6">How contentRepurp Works</h2>
-          <p className="text-lg text-dark-300 max-w-2xl mx-auto">Three simple steps to build your content engine. We handle the formatting, tone, and delivery automatically.</p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            {
-              step: "01",
-              title: "Paste Content",
-              desc: "Paste your existing long-form content, such as a blog post, YouTube transcript, or newsletter.",
-              icon: <HiBolt className="w-8 h-8" />
-            },
-            {
-              step: "02",
-              title: "Select Settings",
-              desc: "Choose your target platform (Twitter, LinkedIn, Instagram) and define the perfect tone of voice.",
-              icon: <HiFaceSmile className="w-8 h-8" />
-            },
-            {
-              step: "03",
-              title: "Generate & Post",
-              desc: "Instantly receive optimized content formatted with hashtags and emojis ready to be published.",
-              icon: <HiChartBar className="w-8 h-8" />
-            }
-          ].map((item, i) => (
-            <div key={i} className="bg-dark-800/40 backdrop-blur-xl p-8 rounded-3xl border border-white/10 hover:border-primary-500/30 transition-all duration-300 group hover:-translate-y-2">
-              <div className="text-primary-500 text-5xl font-black mb-6 opacity-20 group-hover:opacity-40 transition-opacity">{item.step}</div>
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500/20 to-purple-500/20 flex items-center justify-center text-primary-300 mb-6 border border-white/5">
-                {item.icon}
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-4">{item.title}</h3>
-              <p className="text-dark-200 leading-relaxed">{item.desc}</p>
-            </div>
+      {/* Platform band */}
+      <div className="border-y border-white/[0.06] bg-base-900/40">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-4 px-4 py-5 sm:justify-between sm:px-6 lg:px-8">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-500">
+            Writes for
+          </span>
+          {platforms.map((platform) => (
+            <span
+              key={platform.value}
+              className="inline-flex items-center gap-2 text-[12.5px] font-medium text-ink-400"
+            >
+              <platform.icon className="h-3.5 w-3.5 text-ink-500" />
+              {platform.label}
+            </span>
           ))}
         </div>
+      </div>
+
+      {/* How it works */}
+      <section
+        id="how-it-works"
+        className="mx-auto max-w-6xl scroll-mt-24 px-4 py-20 sm:px-6 lg:px-8 lg:py-24"
+      >
+        <div className="max-w-2xl">
+          <h2 className="font-display text-[clamp(1.9rem,4vw,2.75rem)] font-semibold leading-[1.05] tracking-display text-ink-100">
+            Three steps, no blank page.
+          </h2>
+          <p className="mt-4 text-[14.5px] leading-relaxed text-ink-400">
+            The work you already did is the input. Everything after it is
+            adaptation: same argument, different room.
+          </p>
+        </div>
+
+        <ol className="mt-12 grid gap-10 sm:grid-cols-3 sm:gap-8">
+          {steps.map((step, index) => (
+            <Reveal as="li" key={step.index} delay={index * 90}>
+              <div className="flex items-center gap-3">
+                <span className="font-display text-[11px] font-bold tracking-[0.16em] text-primary-300 tabular">
+                  {step.index}
+                </span>
+                <span className="h-px flex-1 bg-white/[0.09]" />
+                <step.icon className="h-[18px] w-[18px] text-ink-500" />
+              </div>
+              <h3 className="mt-5 font-display text-[19px] font-semibold tracking-tighter text-ink-100">
+                {step.title}
+              </h3>
+              <p className="mt-2.5 text-[13.5px] leading-relaxed text-ink-400">
+                {step.body}
+              </p>
+            </Reveal>
+          ))}
+        </ol>
       </section>
 
-      {/* Social Proof / Benefit Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/5 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-16">
-          <div className="flex-1 space-y-8">
-            <h2 className="text-4xl sm:text-5xl font-bold text-white leading-tight">
-              Bring your own <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-blue-400">OpenRouter API</span> Keys.
+      {/* Bring your own key */}
+      <section
+        id="models"
+        className="border-t border-white/[0.06] bg-base-900/30 scroll-mt-24"
+      >
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:px-8 lg:py-24">
+          <div>
+            <h2 className="font-display text-[clamp(1.9rem,4vw,2.75rem)] font-semibold leading-[1.05] tracking-display text-ink-100">
+              Use our free models, or plug in yours.
             </h2>
-            <p className="text-lg text-dark-200 leading-relaxed">
-              We give you full control. Use our default models for free, or plug in your own OpenRouter credentials to generate unlimited content using cutting-edge models like GPT-4o, Claude 3.5 Sonnet, and Gemini 2.0 without any markups.
+            <p className="mt-4 max-w-[52ch] text-[14.5px] leading-relaxed text-ink-400">
+              Every listed model runs on OpenRouter&apos;s free tier. Add your
+              own OpenRouter key when you want different models or more
+              headroom — it is used for that request only.
             </p>
-            <ul className="space-y-4">
-              {[
-                "Unlimited generations with custom keys",
-                "10+ top-tier AI models supported",
-                "Zero markup on your API costs",
-                "Full privacy - keys are never stored permanently"
-              ].map((text, i) => (
-                <li key={i} className="flex items-center gap-3 text-white font-medium">
-                  <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 border border-green-500/30">✓</div>
-                  {text}
+
+            <ul className="mt-7 space-y-3">
+              {benefits.map((benefit) => (
+                <li
+                  key={benefit}
+                  className="flex items-start gap-2.5 text-[13.5px] text-ink-200"
+                >
+                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-lime-500/[0.14]">
+                    <HiOutlineCheck className="h-3 w-3 text-lime-400" />
+                  </span>
+                  {benefit}
                 </li>
               ))}
             </ul>
+
+            <p className="mt-7 flex items-start gap-2 text-[12px] leading-relaxed text-ink-500">
+              <HiOutlineKey className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-400" />
+              Add your own key only when you want more headroom. The free models
+              work without one.
+            </p>
           </div>
-          <div className="flex-1 w-full flex justify-center">
-            <div className="w-full max-w-md bg-dark-800/60 backdrop-blur-2xl p-6 rounded-[2rem] border border-white/10 shadow-2xl relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-purple-500/10 rounded-[2rem] pointer-events-none" />
-              <div className="space-y-4 relative z-10">
-                <div className="flex items-center justify-between border-b border-white/5 pb-4">
-                  <span className="text-white font-bold">Select Model</span>
-                  <span className="text-xs px-2 py-1 bg-primary-500/20 text-primary-300 rounded-lg">Custom Key Live</span>
-                </div>
-                {['GPT-4o (OpenAI)', 'Claude 3.5 Sonnet', 'Gemini 2.0 Flash'].map((model, i) => (
-                  <div key={i} className={`p-4 rounded-xl border ${i === 1 ? 'bg-primary-600/20 border-primary-500/50' : 'bg-dark-700/50 border-white/5'} flex items-center justify-between`}>
-                    <span className="text-sm font-medium text-white">{model}</span>
-                    {i === 1 && <span className="w-2 h-2 rounded-full bg-primary-400" />}
-                  </div>
-                ))}
-              </div>
+
+          <Reveal delay={80} className="min-w-0">
+            <ModelLibrary />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="px-4 py-20 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-6xl overflow-hidden rounded-panel border border-white/[0.09] bg-base-850 px-6 py-14 shadow-panel sm:px-12 sm:py-16">
+          <div
+            className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-primary-500/20 blur-[90px]"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute -bottom-32 right-0 h-72 w-80 rounded-full bg-[#231a3d]/60 blur-[100px]"
+            aria-hidden="true"
+          />
+
+          <div className="relative max-w-xl">
+            <h2 className="font-display text-[clamp(1.9rem,4.4vw,3rem)] font-semibold leading-[1.02] tracking-display text-ink-100">
+              Stop writing the same idea six times.
+            </h2>
+            <p className="mt-4 text-[14.5px] leading-relaxed text-ink-300">
+              Paste one draft and leave with a week of posts. Free to start, no
+              key required.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                to="/register"
+                className="btn-primary group px-6 py-3.5 text-[14.5px]"
+              >
+                Create a free account
+                <HiOutlineArrowRight className="h-4 w-4 transition-transform duration-200 ease-out group-hover:translate-x-0.5" />
+              </Link>
+              <Link to="/login" className="btn-secondary px-5 py-3.5">
+                I already have one
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center relative z-10">
-        <div className="bg-gradient-to-br from-dark-800 to-dark-900 border border-white/10 p-12 sm:p-20 rounded-[3rem] shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-500/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
-          <h2 className="text-4xl sm:text-6xl font-black text-white mb-6 relative z-10">Ready to scale your content?</h2>
-          <p className="text-xl text-dark-200 mb-10 max-w-2xl mx-auto relative z-10">Join creators and marketers who are saving hours every week with contentRepurp.</p>
-          <Link
-            to="/register"
-            className="inline-flex items-center justify-center gap-2 bg-white text-dark-900 hover:bg-white/90 font-bold py-5 px-12 rounded-2xl transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 relative z-10 text-lg"
-          >
-            Start Repurposing Now
-          </Link>
-        </div>
-      </section>
-
-      {/* Simple Footer */}
-      <footer className="py-8 border-t border-white/5 text-center text-dark-400 text-sm relative z-10">
-        <p>© {new Date().getFullYear()} contentRepurp. All rights reserved.</p>
-      </footer>
+      <Footer />
     </div>
   );
 };

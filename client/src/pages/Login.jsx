@@ -1,6 +1,17 @@
 import React, { useState } from "react";
-import { HiSparkles, HiEye, HiEyeSlash } from "react-icons/hi2";
+import { Link } from "react-router-dom";
+import {
+  HiOutlineArrowLeft,
+  HiOutlineArrowRight,
+  HiOutlineCheck,
+  HiOutlineExclamationTriangle,
+  HiOutlineEye,
+  HiOutlineEyeSlash,
+} from "react-icons/hi2";
+import LiveDemo from "../components/LiveDemo";
+import { LogoMark } from "../components/Logo";
 import { loginUser, registerUser } from "../services/api";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 const Login = ({ onLogin, defaultIsRegister = false }) => {
   const [isRegister, setIsRegister] = useState(defaultIsRegister);
@@ -13,68 +24,75 @@ const Login = ({ onLogin, defaultIsRegister = false }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  usePageTitle(isRegister ? "Create account" : "Log in");
+
+  const handleChange = (event) => {
+    setFormData((current) => ({
+      ...current,
+      [event.target.name]: event.target.value,
+    }));
+    if (error) setError("");
+  };
+
+  const switchMode = () => {
+    setIsRegister((current) => !current);
     setError("");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      let res;
-      if (isRegister) {
-        res = await registerUser(formData);
-      } else {
-        res = await loginUser({
-          email: formData.email,
-          password: formData.password,
-        });
-      }
+      const res = isRegister
+        ? await registerUser(formData)
+        : await loginUser({
+            email: formData.email,
+            password: formData.password,
+          });
       onLogin(res.data);
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      setError(
+        err.response?.data?.message ||
+          "That did not work. Check your details and try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] flex items-center justify-center px-4">
-      {/* Background Glow */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-      </div>
+    <div className="grid min-h-[calc(100dvh-4rem)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+      <div className="flex flex-col px-4 py-8 sm:px-6 lg:px-12 lg:py-12">
+        <div className="mx-auto flex w-full max-w-[400px] flex-1 flex-col justify-center">
+          <Link
+            to="/"
+            className="mb-8 inline-flex w-fit items-center gap-1.5 text-[12px] font-medium text-ink-500 transition-colors hover:text-ink-200"
+          >
+            <HiOutlineArrowLeft className="h-3.5 w-3.5" />
+            Back to home
+          </Link>
 
-      <div className="w-full max-w-md relative">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-purple-500 mb-4 shadow-xl shadow-primary-500/20 animate-pulse-glow">
-            <HiSparkles className="w-8 h-8 text-white" />
+          <div className="flex items-center gap-3">
+            <LogoMark className="h-10 w-10 rounded-xl" />
+            <div>
+              <h1 className="font-display text-[26px] font-semibold leading-tight tracking-display text-ink-100">
+                {isRegister ? "Create your account" : "Welcome back"}
+              </h1>
+              <p className="mt-0.5 text-[12.5px] text-ink-400">
+                {isRegister
+                  ? "Free models included. No key required."
+                  : "Sign in to keep repurposing."}
+              </p>
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">
-            {isRegister ? "Create Account" : "Welcome Back"}
-          </h1>
-          <p className="text-dark-200">
-            {isRegister
-              ? "Start repurposing your content with AI"
-              : "Sign in to continue repurposing"}
-          </p>
-        </div>
 
-        {/* Form Card */}
-        <div className="glass rounded-2xl p-8 glow">
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="mt-8 space-y-4">
             {isRegister && (
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-dark-100 mb-1.5"
-                >
-                  Full Name
+              <div className="animate-fade-in">
+                <label htmlFor="name" className="label">
+                  Full name
                 </label>
                 <input
                   type="text"
@@ -82,19 +100,17 @@ const Login = ({ onLogin, defaultIsRegister = false }) => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="John Doe"
-                  className="w-full bg-dark-700 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-dark-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all duration-200"
+                  placeholder="Jane Doe"
+                  autoComplete="name"
+                  className="field"
                   required
                 />
               </div>
             )}
 
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-dark-100 mb-1.5"
-              >
-                Email Address
+              <label htmlFor="email" className="label">
+                Email address
               </label>
               <input
                 type="email"
@@ -102,17 +118,16 @@ const Login = ({ onLogin, defaultIsRegister = false }) => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="you@example.com"
-                className="w-full bg-dark-700 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-dark-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all duration-200"
+                placeholder="you@company.com"
+                autoComplete="email"
+                inputMode="email"
+                className="field"
                 required
               />
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-dark-100 mb-1.5"
-              >
+              <label htmlFor="password" className="label">
                 Password
               </label>
               <div className="relative">
@@ -122,57 +137,117 @@ const Login = ({ onLogin, defaultIsRegister = false }) => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="••••••••"
+                  placeholder="At least 6 characters"
+                  autoComplete={isRegister ? "new-password" : "current-password"}
                   minLength={6}
-                  className="w-full bg-dark-700 border border-white/10 rounded-xl px-4 py-3 pr-12 text-white placeholder-dark-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all duration-200"
+                  className="field pr-11"
                   required
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-300 hover:text-white transition-colors"
+                  onClick={() => setShowPassword((shown) => !shown)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-pressed={showPassword}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-ink-500 transition-colors hover:bg-white/[0.05] hover:text-ink-200"
                 >
                   {showPassword ? (
-                    <HiEyeSlash className="w-5 h-5" />
+                    <HiOutlineEyeSlash className="h-4 w-4" />
                   ) : (
-                    <HiEye className="w-5 h-5" />
+                    <HiOutlineEye className="h-4 w-4" />
                   )}
                 </button>
               </div>
             </div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-xl px-4 py-3">
-                {error}
+              <div
+                role="alert"
+                className="flex items-start gap-2 rounded-tile border border-red-500/25 bg-red-500/[0.06] px-3.5 py-2.5"
+              >
+                <HiOutlineExclamationTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
+                <p className="text-[12.5px] leading-relaxed text-red-200">
+                  {error}
+                </p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-500 hover:to-purple-500 text-white font-semibold py-3.5 rounded-xl transition-all duration-300 disabled:opacity-50 shadow-lg hover:shadow-primary-500/25 active:scale-[0.98]"
+              className="btn-primary group w-full py-3.5"
             >
-              {loading
-                ? "Please wait..."
-                : isRegister
-                ? "Create Account"
-                : "Sign In"}
+              {loading ? (
+                <>
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  {isRegister ? "Creating account…" : "Signing in…"}
+                </>
+              ) : (
+                <>
+                  {isRegister ? "Create account" : "Sign in"}
+                  <HiOutlineArrowRight className="h-4 w-4 transition-transform duration-200 ease-out group-hover:translate-x-0.5" />
+                </>
+              )}
             </button>
           </form>
 
-          <div className="mt-6 text-center">
+          <p className="mt-6 text-center text-[12.5px] text-ink-400">
+            {isRegister
+              ? "Already have an account?"
+              : "New to contentRepurp?"}{" "}
             <button
-              onClick={() => {
-                setIsRegister(!isRegister);
-                setError("");
-              }}
-              className="text-sm text-dark-200 hover:text-primary-400 transition-colors"
+              type="button"
+              onClick={switchMode}
+              className="font-semibold text-primary-300 transition-colors hover:text-primary-200"
             >
-              {isRegister
-                ? "Already have an account? Sign in"
-                : "Don't have an account? Register"}
+              {isRegister ? "Sign in" : "Create one free"}
             </button>
+          </p>
+
+          <p className="mt-8 border-t border-white/[0.06] pt-4 text-[11px] leading-relaxed text-ink-500">
+            By continuing you agree to use contentRepurp responsibly. Generated
+            drafts are saved to your account so you can find them in History.
+          </p>
+        </div>
+      </div>
+
+      <div className="relative hidden overflow-hidden border-l border-white/[0.06] bg-base-900 lg:flex lg:items-center lg:justify-center lg:p-10">
+        <div
+          className="pointer-events-none absolute -right-32 top-1/4 h-80 w-80 rounded-full bg-primary-600/[0.18] blur-[100px]"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute -left-24 bottom-0 h-64 w-64 rounded-full bg-[#241b3f]/60 blur-[90px]"
+          aria-hidden="true"
+        />
+
+        <div className="relative w-full max-w-md">
+          <p className="font-display text-[24px] font-semibold leading-tight tracking-display text-ink-100">
+            The draft you already wrote is enough.
+          </p>
+          <p className="mt-3 text-[13.5px] leading-relaxed text-ink-400">
+            One source becomes a post, a thread, and an email. Pick the room,
+            keep the argument.
+          </p>
+
+          <div className="mt-7">
+            <LiveDemo autoPlay={false} compact />
           </div>
+
+          <ul className="mt-6 space-y-2">
+            {[
+              "Free models, no API key needed",
+              "Your history stays attached to your account",
+              "Bring your own OpenRouter key any time",
+            ].map((item) => (
+              <li
+                key={item}
+                className="flex items-center gap-2 text-[12px] text-ink-300"
+              >
+                <HiOutlineCheck className="h-3.5 w-3.5 text-lime-400" />
+                {item}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>

@@ -1,61 +1,113 @@
-import React, { useEffect, useState } from "react";
-import { HiExclamationCircle, HiCheckCircle, HiXMark } from "react-icons/hi2";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  HiOutlineCheckCircle,
+  HiOutlineExclamationTriangle,
+  HiOutlineXMark,
+} from "react-icons/hi2";
 
-const Toast = ({ title, message, suggestion, type = "error", onClose }) => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    // Trigger animation on mount
-    setTimeout(() => setIsVisible(true), 10);
-    return () => setIsVisible(false);
-  }, []);
-
-  const handleClose = () => {
-    setIsVisible(false);
-    setTimeout(onClose, 300); // Wait for exit animation
-  };
+const Toast = ({
+  title,
+  message,
+  suggestion,
+  type = "error",
+  duration = 8000,
+  onClose,
+}) => {
+  const [visible, setVisible] = useState(false);
+  const onCloseRef = useRef(onClose);
+  const closeTimer = useRef(null);
 
   const isError = type === "error";
 
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setVisible(true));
+    const hide = setTimeout(() => setVisible(false), duration);
+    const remove = setTimeout(() => onCloseRef.current(), duration + 240);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(hide);
+      clearTimeout(remove);
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    };
+  }, [duration]);
+
+  const handleClose = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setVisible(false);
+    closeTimer.current = setTimeout(() => onCloseRef.current(), 220);
+  };
+
   return (
     <div
-      className={`fixed bottom-6 right-6 max-w-sm w-full z-50 transition-all duration-300 transform ${
-        isVisible ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0 pointer-events-none"
+      className={`fixed inset-x-4 bottom-4 z-[60] transition-all duration-300 ease-out sm:inset-x-auto sm:bottom-6 sm:right-6 sm:w-full sm:max-w-sm ${
+        visible
+          ? "translate-y-0 opacity-100"
+          : "pointer-events-none translate-y-4 opacity-0"
       }`}
     >
-      <div className={`rounded-xl p-4 shadow-2xl border backdrop-blur-md ${
-        isError ? "bg-red-500/10 border-red-500/20 text-red-100" : "bg-green-500/10 border-green-500/20 text-green-100"
-      }`}>
-        <div className="flex items-start gap-3 relative">
-          <div className="shrink-0 mt-0.5">
-            {isError ? (
-              <HiExclamationCircle className="w-6 h-6 text-red-400" />
-            ) : (
-              <HiCheckCircle className="w-6 h-6 text-green-400" />
-            )}
-          </div>
-          <div className="flex-1 pr-6">
-            <h3 className={`font-semibold text-sm mb-1 ${isError ? "text-red-300" : "text-green-300"}`}>
-              {title}
-            </h3>
-            <p className="text-sm opacity-90 leading-snug mb-2 whitespace-pre-wrap">{message}</p>
-            {suggestion && (
-              <div className={`text-xs font-medium p-2 rounded-lg mt-2 inline-block ${
-                isError ? "bg-red-500/20 text-red-200" : "bg-green-500/20 text-green-200"
-              }`}>
-                💡 {suggestion}
-              </div>
-            )}
-          </div>
-          
-          <button
-            onClick={handleClose}
-            className={`absolute top-0 right-0 p-1 rounded-md transition-colors ${
-              isError ? "hover:bg-red-500/20 text-red-400" : "hover:bg-green-500/20 text-green-400"
+      <div
+        role={isError ? "alert" : "status"}
+        className={`overflow-hidden rounded-card border shadow-panel ${
+          isError
+            ? "border-red-500/25 bg-[#1a0f12]"
+            : "border-lime-500/25 bg-[#101508]"
+        }`}
+      >
+        <div className="flex items-start gap-3 p-4">
+          <span
+            className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+              isError
+                ? "bg-red-500/[0.12] text-red-400"
+                : "bg-lime-500/[0.12] text-lime-400"
             }`}
           >
-            <HiXMark className="w-5 h-5" />
+            {isError ? (
+              <HiOutlineExclamationTriangle className="h-[18px] w-[18px]" />
+            ) : (
+              <HiOutlineCheckCircle className="h-[18px] w-[18px]" />
+            )}
+          </span>
+
+          <div className="min-w-0 flex-1 pr-4">
+            <p
+              className={`text-[13.5px] font-semibold ${
+                isError ? "text-red-200" : "text-lime-200"
+              }`}
+            >
+              {title}
+            </p>
+            <p className="mt-1 whitespace-pre-wrap text-[12.5px] leading-relaxed text-ink-300">
+              {message}
+            </p>
+            {suggestion && (
+              <p className="mt-2 border-t border-white/[0.07] pt-2 text-[11.5px] leading-relaxed text-ink-400">
+                {suggestion}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={handleClose}
+            aria-label="Dismiss notification"
+            className="shrink-0 rounded-md p-1 text-ink-400 transition-colors hover:bg-white/[0.06] hover:text-ink-100"
+          >
+            <HiOutlineXMark className="h-4 w-4" />
           </button>
+        </div>
+
+        <div className="h-[2px] w-full bg-white/[0.06]">
+          <div
+            className={`h-full origin-left animate-toast-progress ${
+              isError ? "bg-red-400/70" : "bg-lime-400/70"
+            }`}
+            style={{ animationDuration: `${duration}ms` }}
+          />
         </div>
       </div>
     </div>

@@ -1,16 +1,69 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
-  Routes,
-  Route,
   Navigate,
+  Route,
+  Routes,
+  useLocation,
 } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import { LogoMark } from "./components/Logo";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import History from "./pages/History";
+
+const AppRoutes = ({ user, onLogin, onUpdateUser }) => {
+  const location = useLocation();
+
+  return (
+    <main id="main" key={location.pathname} className="flex-1 animate-fade-in">
+      <Routes>
+        <Route path="/" element={<Landing user={user} />} />
+        <Route
+          path="/login"
+          element={
+            user ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Login onLogin={onLogin} defaultIsRegister={false} />
+            )
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            user ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Login onLogin={onLogin} defaultIsRegister />
+            )
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={user ? <Dashboard user={user} /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/profile"
+          element={
+            user ? (
+              <Profile user={user} onUpdateUser={onUpdateUser} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/history"
+          element={user ? <History /> : <Navigate to="/login" />}
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </main>
+  );
+};
 
 function App() {
   const [user, setUser] = useState(null);
@@ -19,7 +72,11 @@ function App() {
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        localStorage.removeItem("user");
+      }
     }
     setLoading(false);
   }, []);
@@ -41,61 +98,31 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark-900 flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex min-h-dvh items-center justify-center bg-base-950">
+        <div className="flex flex-col items-center gap-4">
+          <LogoMark className="h-10 w-10 rounded-xl" />
+          <span className="sr-only">Loading contentRepurp</span>
+          <span className="h-5 w-5 animate-spin rounded-full border-2 border-primary-500/60 border-t-transparent" />
+        </div>
       </div>
     );
   }
 
   return (
     <Router>
-      <div className="min-h-screen bg-dark-900">
+      <div className="flex min-h-dvh flex-col bg-base-950">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-[13px] focus:font-semibold focus:text-base-950"
+        >
+          Skip to content
+        </a>
         <Navbar user={user} onLogout={handleLogout} />
-        <Routes>
-          <Route path="/" element={<Landing user={user} />} />
-          <Route
-            path="/login"
-            element={
-              !user ? (
-                <Login onLogin={handleLogin} defaultIsRegister={false} />
-              ) : (
-                <Navigate to="/dashboard" />
-              )
-            }
-          />
-          <Route
-            path="/register"
-            element={
-              !user ? (
-                <Login onLogin={handleLogin} defaultIsRegister={true} />
-              ) : (
-                <Navigate to="/dashboard" />
-              )
-            }
-          />
-          <Route
-            path="/dashboard"
-            element={
-              user ? <Dashboard user={user} /> : <Navigate to="/login" />
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              user ? (
-                <Profile user={user} onUpdateUser={handleUpdateUser} />
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          <Route
-            path="/history"
-            element={
-              user ? <History user={user} /> : <Navigate to="/login" />
-            }
-          />
-        </Routes>
+        <AppRoutes
+          user={user}
+          onLogin={handleLogin}
+          onUpdateUser={handleUpdateUser}
+        />
       </div>
     </Router>
   );
