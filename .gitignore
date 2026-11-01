@@ -3,3 +3,6 @@
 
 # Ignore Node.js modules
 node_modules/
+
+# Generated model probe report
+server/scripts/free-models-report.json

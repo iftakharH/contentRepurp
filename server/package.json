@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "check-models": "node scripts/check-free-models.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

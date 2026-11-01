@@ -2,6 +2,10 @@ const Content = require("../models/Content");
 const aiGlobal = require("../config/ai");
 const { OpenAI } = require("openai");
 
+// Must stay in sync with the first entry in client/src/data/options.js.
+// Verified live via `node scripts/check-free-models.js`.
+const DEFAULT_FREE_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free";
+
 // @desc    Repurpose content using OpenRouter
 // @route   POST /api/content/repurpose
 // @access  Private
@@ -10,9 +14,9 @@ const repurposeContent = async (req, res) => {
     const { originalContent, platform, tone, model, customApiKey } = req.body;
     
     // SECURITY: Ensure the requested model is free unless a custom API key is explicitly provided!
-    let selectedModel = model || "google/gemma-3-27b-it:free";
+    let selectedModel = model || DEFAULT_FREE_MODEL;
     if (!customApiKey && !selectedModel.endsWith(":free")) {
-      selectedModel = "google/gemma-3-27b-it:free";
+      selectedModel = DEFAULT_FREE_MODEL;
     }
 
     if (!originalContent || !platform) {
@@ -46,7 +50,18 @@ Repurposed Content for ${platform}:`;
       temperature: 0.7,
     });
 
-    const repurposedContent = completion.choices[0].message.content.trim();
+    // Reasoning-only free models can spend the whole token budget on `reasoning`
+    // and return content: null. Guard it so the user gets a retryable message
+    // instead of a TypeError 500.
+    const message = completion.choices?.[0]?.message;
+    const repurposedContent = message?.content?.trim();
+
+    if (!repurposedContent) {
+      return res.status(502).json({
+        message:
+          "That model returned no text. Try a different model, or add your own OpenRouter key in Profile.",
+      });
+    }
 
     // Save to database
     const content = await Content.create({

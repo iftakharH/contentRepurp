@@ -86,6 +86,25 @@ The client runs on `http://localhost:3000` and the server on `http://localhost:5
 | GET    | `/api/content`            | Private | Get user's content      |
 | DELETE | `/api/content/:id`        | Private | Delete content          |
 
+## Model catalog maintenance
+
+The app only ships free OpenRouter models, and OpenRouter retires them without
+notice. When a retired ID stays in `client/src/data/options.js`, every generate
+click fails with a 404 — that has already happened once.
+
+**Run this on the first of every month, and before any deploy:**
+
+```bash
+cd server
+npm run check-models
+```
+
+It prints `PASS`/`FAIL` per free model, names any shipped ID that no longer
+exists, and writes `server/scripts/free-models-report.json`. Copy the `PASS`
+entries into `client/src/data/options.js` (first entry becomes the default) and
+update `DEFAULT_FREE_MODEL` in `server/controllers/contentController.js` to
+match. Use `--catalog` for a fast check that spends no tokens.
+
 ## License
 
 MIT
