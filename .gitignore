@@ -6,3 +6,7 @@ node_modules/
 
 # Generated model probe report
 server/scripts/free-models-report.json
+
+# Local agent tool config (absolute paths to this machine's home directory)
+.cursor/
+.gemini/
